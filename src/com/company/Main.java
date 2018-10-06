@@ -1,16 +1,25 @@
 package com.company;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    public static void main(String[] args) {
-	// write your code here
+    @Override
+    public void start(Stage primaryStage) throws Exception{
+        Pane pane = FXMLLoader.load(this.getClass().getResource("View/Home.fxml"));
+        primaryStage.setTitle("Network Diagram Analyzer");
+        Scene scene = new Scene(pane, 1440, 900);
+        primaryStage.setScene(scene);
+        scene.getStylesheets().add(
+                String.valueOf(getClass().getClassLoader().getResource("com/company/style.css")));
+        primaryStage.show();
     }
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-
+    public static void main(String[] args) {
+        launch(args);
     }
 }
