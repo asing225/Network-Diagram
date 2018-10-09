@@ -1,6 +1,7 @@
 package com.company.Controller;
 
 import com.company.Model.Activity;
+import com.company.Model.Business;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,6 +11,9 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HomeController {
     @FXML                                                       //getting textFields data from user inputs in local variables.
@@ -38,8 +42,8 @@ public class HomeController {
     private Label errorDuration;
     @FXML
     private Label errorDependency;
-    @FXML
-    private ComboBox dependencyMenu;
+    /*@FXML
+    private ComboBox dependencyMenu;*/
 
     @FXML                                                       //method to open About window on button click.
     public void openAboutTab(ActionEvent event) {
@@ -57,7 +61,7 @@ public class HomeController {
         Stage newWindow = aboutPage.helpDisplay();
         newWindow.setX(500);
         newWindow.setY(500);
-        newWindow.setTitle("About");
+        newWindow.setTitle("Help");
         newWindow.show();
     }
 
@@ -67,9 +71,12 @@ public class HomeController {
         System.exit(0);
     }
 
-    private ArrayList<Integer> times = new ArrayList();                 //local variables to store the user data.
+    /*private ArrayList<Integer> times = new ArrayList();                 //local variables to store the user data.
     private ArrayList<String> inputActivity = new ArrayList();
-    private  ArrayList<String> inputDdependency = new ArrayList();
+    private  ArrayList<String> inputDdependency = new ArrayList();*/
+
+    private List<Activity> activityList = new ArrayList<Activity>();
+    private List<Map.Entry<List<String>,Integer>> Output= new ArrayList<Map.Entry<List<String>,Integer>> ();
 
     //private HashMap<String,String> activites = new HashMap<>();
 
@@ -82,10 +89,16 @@ public class HomeController {
         errorDuration.setText("");
         errorDependency.setText("");
 
-        if(inputDdependency.isEmpty()){                                //Setting up first activity as a root element.
+        /*if(inputDdependency.isEmpty()){                                //Setting up first activity as a root element.
+            dependency.setText("root");
+            errorDependency.setText("This is a root Activity");
+            errorDependency.setStyle("-fx-text-fill: black;");*/
+
+        if(dependency.getText().isEmpty()){                                //Setting up first activity as a root element.
             dependency.setText("root");
             errorDependency.setText("This is a root Activity");
             errorDependency.setStyle("-fx-text-fill: black;");
+
         }
         //Error handling of input fields
         if(activityName.getText().isEmpty()||duration.getText().isEmpty()||dependency.getText().isEmpty()|| !duration.getText().matches("\\d*")){
@@ -111,17 +124,22 @@ public class HomeController {
         //to check that the dependencies are previous entries.
 
         else{
-            Activity activity = new Activity(activityName.getText(),Integer.parseInt(duration.getText()),dependency.getText());
+            /*Activity activity = new Activity(activityName.getText(),Integer.parseInt(duration.getText()),dependency.getText());*/
             //activites.put(activity.getActivity(),activity.getDependency());
-            inputActivity.add(activity.getActivity());
+            /*inputActivity.add(activity.getActivity());
             inputDdependency.add(activity.getDependency());
-            times.add(activity.getDuration());
-            dependencyMenu.getItems().addAll(activity.getActivity());
+            times.add(activity.getDuration());*/
+            Activity activity = new Activity();
+            activity.setActivity(activityName.getText());
+            activity.setDuration(Integer.parseInt(duration.getText()));
+            activity.setDependency(dependency.getText());
+            activityList.add(activity);
+            //dependencyMenu.getItems().addAll(activity.getActivity());
         }
-        System.out.println(times);
+        /*System.out.println(times);
         System.out.println(inputActivity);
-        System.out.println(inputDdependency);
-        dependency.setDisable(false);
+        System.out.println(inputDdependency);*/
+        //dependency.setDisable(false);
         resetActivity(event);
     }
 
@@ -145,9 +163,11 @@ public class HomeController {
         newWin.setX(300);
         newWin.setY(100);
         newWin.show();
+        Business path = new Business();
+        Output = path.createNetwork(activityList);
     }
 
-    public void chooseDependency(ActionEvent event) {
+    /*public void chooseDependency(ActionEvent event) {
         dependency.setText(dependencyMenu.getValue().toString());
-    }
+    }*/
 }
