@@ -1,5 +1,8 @@
 package com.company.Controller;
 
+
+import com.company.Model.Activity;
+import com.company.Model.Business;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,7 +17,12 @@ import org.controlsfx.control.CheckComboBox;
 
 import java.net.URL;
 import java.util.ArrayList;
+
 import java.util.ResourceBundle;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 public class HomeController extends Control implements Initializable{
 
@@ -40,9 +48,12 @@ public class HomeController extends Control implements Initializable{
     @FXML
     private CheckComboBox<String> dropDown = new CheckComboBox<String>();
 
-    private ArrayList<Integer> times = new ArrayList();                 //local variables to store the user data.
+   //local variables to store the user data.
     private ArrayList<String> inputActivity = new ArrayList();
-    private ArrayList<String> inputDependency = new ArrayList();
+
+    private List<Activity> activityList = new ArrayList<Activity>();
+    private List<Map.Entry<List<String>,Integer>> Output= new ArrayList<Map.Entry<List<String>,Integer>> ();
+
 
     @FXML
     //method to add the activity entered by user to our local variables
@@ -81,13 +92,13 @@ public class HomeController extends Control implements Initializable{
         }
 
         else{
-            inputActivity.add(activityName.getText());
-            times.add(Integer.parseInt(duration.getText()));
-            inputDependency.add(String.valueOf(dropDown.getCheckModel().getCheckedItems()));
-        }
-        System.out.println(times);
-        System.out.println(inputActivity);
-        System.out.println(inputDependency);
+
+        inputActivity.add(activityName.getText());
+        Activity activity = new Activity();
+        activity.setActivity(activityName.getText());
+        activity.setDuration(Integer.parseInt(duration.getText()));
+        activity.setDependency(String.valueOf(dropDown.getCheckModel().getCheckedItems()));
+        activityList.add(activity);
         resetActivity(event);
     }
 
@@ -106,7 +117,7 @@ public class HomeController extends Control implements Initializable{
         duration.getStyleClass().remove("error");
         errorDependency.setText("");
         dropDown.getStyleClass().remove("error");
-        dropDown.getItems().clear();
+        if(!inputActivity.get(0).isEmpty()){dropDown.getItems().clear();}
         ObservableList<String> list = FXCollections.observableArrayList();
         list.addAll(inputActivity);
         dropDown.getItems().addAll(list);
@@ -146,5 +157,7 @@ public class HomeController extends Control implements Initializable{
         newWin.setX(300);
         newWin.setY(100);
         newWin.show();
+        Business path = new Business();
+        Output = path.createNetwork(activityList);
     }
 }
