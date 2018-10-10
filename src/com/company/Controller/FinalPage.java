@@ -5,9 +5,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-
 public class FinalPage {
     public Stage finalPage() throws Exception {
         Pane pane = FXMLLoader.load(this.getClass().getResource("../View/Final.fxml"));
