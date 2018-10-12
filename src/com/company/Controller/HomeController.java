@@ -1,8 +1,10 @@
 package com.company.Controller;
 
 
+import com.company.Main;
 import com.company.Model.Activity;
 import com.company.Model.Business;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,12 +16,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckComboBox;
-
 import java.net.URL;
 import java.util.ArrayList;
-
 import java.util.ResourceBundle;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,17 +27,11 @@ public class HomeController extends Control implements Initializable {
 
     //getting textFields data from user inputs in local variables.
     @FXML
+    public TextArea finalOutput;
+    @FXML
     private TextField activityName;
     @FXML
     private TextField duration;
-    @FXML
-    private TableColumn<String, String> activityColumn;
-    @FXML
-    private TableColumn<String, String> durationColumn;
-    @FXML
-    private TableColumn<String, String> dependencyColumn;
-    @FXML
-    private TableView<String> activityTable;
     @FXML
     private Label errorActivity;
     @FXML
@@ -52,8 +45,7 @@ public class HomeController extends Control implements Initializable {
     private ArrayList<String> inputActivity = new ArrayList();
 
     private List<Activity> activityList = new ArrayList<Activity>();
-    private List<Map.Entry<List<String>, Integer>> Output = new ArrayList<Map.Entry<List<String>, Integer>>();
-
+    private List<Map.Entry<List<String>, Integer>> output = new ArrayList<Map.Entry<List<String>, Integer>>();
 
     @FXML
     //method to add the activity entered by user to our local variables
@@ -96,10 +88,11 @@ public class HomeController extends Control implements Initializable {
             activity.setDuration(Integer.parseInt(duration.getText()));
             activity.setDependency((String.valueOf(dropDown.getCheckModel().getCheckedItems())).replaceAll("\\[","").replaceAll("\\]",""));
             activityList.add(activity);
+            finalOutput.setText("Activity "+ activityName.getText() + " added with Duration: "+ duration.getText());
+            finalOutput.appendText("\n");
             resetActivity(event);
         }
     }
-
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -116,7 +109,7 @@ public class HomeController extends Control implements Initializable {
         duration.getStyleClass().remove("error");
         errorDependency.setText("");
         dropDown.getStyleClass().remove("error");
-        if (!inputActivity.get(0).isEmpty()) {
+        if(!activityList.isEmpty()){
             dropDown.getItems().clear();
         }
         ObservableList<String> list = FXCollections.observableArrayList();
@@ -153,12 +146,26 @@ public class HomeController extends Control implements Initializable {
 
     @FXML
     public void createNetworkDiagram(ActionEvent event) throws Exception {
-        FinalPage window = new FinalPage();
-        Stage newWin = window.finalPage();
-        newWin.setX(300);
-        newWin.setY(100);
-        newWin.show();
-        Business path = new Business();
-        Output = path.createNetwork(activityList);
+        if(activityList.size()==0){
+            finalOutput.setText("Please enter at least 1 Activity.");
+            return;
+        }
+        else{
+            Business path = new Business();
+            output = path.createNetwork(activityList);
+            Object[] pathsToArrays = output.toArray();
+            finalOutput.setText(null);
+            for(int i=0;i<pathsToArrays.length;i++){
+                String paths = pathsToArrays[i].toString().replaceAll("\\[","").replaceAll("\\]","").replaceAll(",","->").replaceAll(" ","");
+                String pathDuration = paths.substring(paths.lastIndexOf("=")).replaceAll("=","");
+                finalOutput.appendText("\n" + "Path: "+ paths.substring(0,paths.indexOf("=")) +"\n" + "Duration: "+ pathDuration+ "\n");
+            }
+        }
+    }
+
+    public void newNetworkDiagram(ActionEvent event) throws Exception {
+        Main main = new Main();
+        Stage primaryStage = new Stage();
+        main.start(primaryStage);
     }
 }
