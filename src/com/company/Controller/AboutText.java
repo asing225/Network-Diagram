@@ -6,7 +6,7 @@ public class AboutText {
     public Text[] aboutText(){
 
         Text text1 = new Text();
-        text1.setText("\t\tNetwork Diagram Analyzer\n\n");
+        text1.setText("\t\t\tNetwork Diagram Analyzer\n\n");
         text1.setTextAlignment(TextAlignment.CENTER);
         text1.setFont(Font.font(null, FontWeight.BOLD, FontPosture.REGULAR, 16));
 
