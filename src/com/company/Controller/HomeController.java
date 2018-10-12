@@ -27,7 +27,7 @@ public class HomeController extends Control implements Initializable {
 
     //getting textFields data from user inputs in local variables.
     @FXML
-    public TextArea finalOutput;
+    private TextArea finalOutput;
     @FXML
     private TextField activityName;
     @FXML
@@ -153,12 +153,17 @@ public class HomeController extends Control implements Initializable {
         else{
             Business path = new Business();
             output = path.createNetwork(activityList);
-            Object[] pathsToArrays = output.toArray();
-            finalOutput.setText(null);
-            for(int i=0;i<pathsToArrays.length;i++){
-                String paths = pathsToArrays[i].toString().replaceAll("\\[","").replaceAll("\\]","").replaceAll(",","->").replaceAll(" ","");
-                String pathDuration = paths.substring(paths.lastIndexOf("=")).replaceAll("=","");
-                finalOutput.appendText("\n" + "Path: "+ paths.substring(0,paths.indexOf("=")) +"\n" + "Duration: "+ pathDuration+ "\n");
+            if(output==null){
+                finalOutput.setText("The Network Diagram should not be cyclic.");
+            }
+            else{
+                Object[] pathsToArrays = output.toArray();
+                finalOutput.setText(null);
+                for(int i=0;i<pathsToArrays.length;i++){
+                    String paths = pathsToArrays[i].toString().replaceAll("\\[","").replaceAll("\\]","").replaceAll(",","->").replaceAll(" ","");
+                    String pathDuration = paths.substring(paths.lastIndexOf("=")).replaceAll("=","");
+                    finalOutput.appendText("\n" + "Path: "+ paths.substring(0,paths.indexOf("=")) +"\n" + "Duration: "+ pathDuration+ "\n");
+                }
             }
         }
     }
