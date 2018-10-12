@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class HomeController extends Control implements Initializable{
+public class HomeController extends Control implements Initializable {
 
     //getting textFields data from user inputs in local variables.
     @FXML
@@ -32,11 +32,11 @@ public class HomeController extends Control implements Initializable{
     @FXML
     private TextField duration;
     @FXML
-    private TableColumn<String,String> activityColumn;
+    private TableColumn<String, String> activityColumn;
     @FXML
-    private TableColumn<String,String> durationColumn;
+    private TableColumn<String, String> durationColumn;
     @FXML
-    private TableColumn<String,String> dependencyColumn;
+    private TableColumn<String, String> dependencyColumn;
     @FXML
     private TableView<String> activityTable;
     @FXML
@@ -48,17 +48,16 @@ public class HomeController extends Control implements Initializable{
     @FXML
     private CheckComboBox<String> dropDown = new CheckComboBox<String>();
 
-   //local variables to store the user data.
+    //local variables to store the user data.
     private ArrayList<String> inputActivity = new ArrayList();
 
     private List<Activity> activityList = new ArrayList<Activity>();
-    private List<Map.Entry<List<String>,Integer>> Output= new ArrayList<Map.Entry<List<String>,Integer>> ();
+    private List<Map.Entry<List<String>, Integer>> Output = new ArrayList<Map.Entry<List<String>, Integer>>();
 
 
     @FXML
     //method to add the activity entered by user to our local variables
     public void addActivity(ActionEvent event) {
-
         activityName.getStyleClass().remove("error");       //removing the error styling of red textfields
         duration.getStyleClass().remove("error");
         dropDown.getStyleClass().remove("error");
@@ -67,7 +66,7 @@ public class HomeController extends Control implements Initializable{
         errorDependency.setText("");
 
         //Error handling of input fields
-        if (activityName.getText().isEmpty() || duration.getText().isEmpty() || duration.getText().equals("0") || !duration.getText().matches("\\d*")|| dropDown.getCheckModel().isEmpty()) {
+        if (activityName.getText().isEmpty() || duration.getText().isEmpty() || duration.getText().equals("0") || !duration.getText().matches("\\d*") || dropDown.getCheckModel().isEmpty()) {
             if (activityName.getText().isEmpty()) {
                 activityName.getStyleClass().add("error");
                 errorActivity.setText("Please enter Activity Name");
@@ -80,27 +79,27 @@ public class HomeController extends Control implements Initializable{
                 duration.getStyleClass().add("error");
                 errorDuration.setText("Please enter only numeric values");
             }
-            if(duration.getText().equals("0")){
+            if (duration.getText().equals("0")) {
                 duration.getStyleClass().add("error");
                 errorDuration.setText("Duration of an activity cannot be 0");
             }
-            if(dropDown.getCheckModel().isEmpty()){
+            if (dropDown.getCheckModel().isEmpty()) {
                 errorDependency.setText("Please select a dependency");
                 dropDown.getStyleClass().add("error");
             }
             return;
+        } else {
+
+            inputActivity.add(activityName.getText());
+            Activity activity = new Activity();
+            activity.setActivity(activityName.getText());
+            activity.setDuration(Integer.parseInt(duration.getText()));
+            activity.setDependency((String.valueOf(dropDown.getCheckModel().getCheckedItems())).replaceAll("\\[","").replaceAll("\\]",""));
+            activityList.add(activity);
+            resetActivity(event);
         }
-
-        else{
-
-        inputActivity.add(activityName.getText());
-        Activity activity = new Activity();
-        activity.setActivity(activityName.getText());
-        activity.setDuration(Integer.parseInt(duration.getText()));
-        activity.setDependency(String.valueOf(dropDown.getCheckModel().getCheckedItems()));
-        activityList.add(activity);
-        resetActivity(event);
     }
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -117,7 +116,9 @@ public class HomeController extends Control implements Initializable{
         duration.getStyleClass().remove("error");
         errorDependency.setText("");
         dropDown.getStyleClass().remove("error");
-        if(!inputActivity.get(0).isEmpty()){dropDown.getItems().clear();}
+        if (!inputActivity.get(0).isEmpty()) {
+            dropDown.getItems().clear();
+        }
         ObservableList<String> list = FXCollections.observableArrayList();
         list.addAll(inputActivity);
         dropDown.getItems().addAll(list);
