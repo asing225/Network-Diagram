@@ -31,29 +31,28 @@
             <Label fx:id="dependencyLabel" layoutX="59.0" layoutY="130.0" text="Dependencies" />
             <TextField fx:id="activityName" layoutX="173.0" layoutY="54.0" prefHeight="27.0" prefWidth="254.0" promptText="e.g. Task1" />
             <TextField fx:id="duration" layoutX="173.0" layoutY="90.0" prefHeight="27.0" prefWidth="255.0" promptText="e.g. 2" />
-            <Button fx:id="addActivityButton" layoutX="56.0" layoutY="200.0" mnemonicParsing="false" onAction="#addActivity" text="Add Activity" />
+            <Button fx:id="addActivityButton" layoutX="59.0" layoutY="200.0" mnemonicParsing="false" onAction="#addActivity" text="Add Activity" />
             <Button layoutX="177.0" layoutY="200.0" mnemonicParsing="false" onAction="#resetActivity" text="Reset Activity" />
             <Button layoutX="59.0" layoutY="257.0" mnemonicParsing="false" onAction="#createNetworkDiagram" text="Create Network Diagram" />
             <Label fx:id="errorActivity" layoutX="445.0" layoutY="59.0" textFill="#ff1e1e" />
             <Label fx:id="errorDuration" layoutX="445.0" layoutY="96.0" textFill="#ff1e1e" />
             <Label fx:id="errorDependency" layoutX="445.0" layoutY="130.0" textFill="#ff1e1e" />
-         <CheckComboBox fx:id="dropDown" layoutX="173.0" layoutY="126.0" prefHeight="28.0" prefWidth="254.0"/>
+         <CheckComboBox fx:id="dropDown" layoutX="173.0" layoutY="126.0" prefHeight="28.0" prefWidth="254.0" />
+         <TableView fx:id="activityTable" layoutY="320.0" prefHeight="200.0" prefWidth="750.0">
+           <columns>
+             <TableColumn fx:id="activityNameColumn" editable="false" maxWidth="-1.0" minWidth="250.0" prefWidth="250.0" text="Activity Name" />
+             <TableColumn fx:id="activityDurationColumn" editable="false" maxWidth="-1.0" minWidth="250.0" prefWidth="250.0" text="Duration" />
+               <TableColumn fx:id="activityDependencyColumn" editable="false" maxWidth="-1.0" minWidth="250.0" prefWidth="250.0" text="Dependency" />
+           </columns>
+         </TableView>
+         <Button layoutX="245.0" layoutY="257.0" mnemonicParsing="false" text="New Network Diagram" />
+         <Label layoutX="59.0" layoutY="600.0" text="Final Output" />
         </Pane>
     </center>
-    <bottom>
-        <TableView fx:id="activityTable" prefHeight="187.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-            <columns>
-                <TableColumn fx:id="activityColumn" prefWidth="162.0" text="Activity Name" />
-                <TableColumn fx:id="durationColumn" prefWidth="167.0" text="Duration" />
-                <TableColumn fx:id="dependencyColumn" prefWidth="153.0" text="Dependency" />
-                <TableColumn fx:id="editOrDelete" prefWidth="117.0" text="Edit/Delete" />
-            </columns>
-            <padding>
-                <Insets bottom="30.0" />
-            </padding>
-        </TableView>
-    </bottom>
     <opaqueInsets>
         <Insets />
     </opaqueInsets>
+   <bottom>
+      <TextField fx:id="finalOutput" editable="false" prefHeight="99.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+   </bottom>
 </BorderPane>
