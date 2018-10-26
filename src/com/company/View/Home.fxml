@@ -4,13 +4,13 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
-<?import org.controlsfx.control.CheckComboBox?>
 
-<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.company.Controller.HomeController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.company.Controller.HomeController">
     <top>
         <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER_RIGHT">
             <buttons>
@@ -25,27 +25,32 @@
     </top>
     <center>
         <Pane prefHeight="427.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-            <Label layoutX="59.0" layoutY="40.0" text="Activity Name" />
-            <Label layoutX="59.0" layoutY="75.0" text="Duration" />
-            <Label layoutX="59.0" layoutY="110.0" text="Dependencies" />
-            <TextField fx:id="activityName" layoutX="173.0" layoutY="36.0" prefHeight="27.0" prefWidth="254.0" promptText="e.g. Task1" />
-            <TextField fx:id="duration" layoutX="173.0" layoutY="71.0" prefHeight="27.0" prefWidth="255.0" promptText="e.g. 2" />
-            <Button layoutX="59.0" layoutY="175.0" mnemonicParsing="false" onAction="#addActivity" prefHeight="32.0" prefWidth="165.0" text="Add Activity" />
-            <Button layoutX="261.0" layoutY="175.0" mnemonicParsing="false" onAction="#resetActivity" prefHeight="32.0" prefWidth="165.0" text="Reset Activity" />
-            <Button layoutX="59.0" layoutY="225.0" mnemonicParsing="false" onAction="#createNetworkDiagram" prefHeight="32.0" prefWidth="366.0" text="Create Network Diagram" />
-            <Label fx:id="errorActivity" layoutX="445.0" layoutY="36.0" textFill="#ff1e1e" />
-            <Label fx:id="errorDuration" layoutX="445.0" layoutY="71.0" textFill="#ff1e1e" />
-            <Label fx:id="errorDependency" layoutX="445.0" layoutY="106.0" textFill="#ff1e1e" />
-         <CheckComboBox fx:id="dropDown" layoutX="173.0" layoutY="106.0" prefHeight="28.0" prefWidth="254.0" />
-         <Label layoutX="59.0" layoutY="510.0" text="Output" />
-         <Button layoutX="59.0" layoutY="277.0" mnemonicParsing="false" onAction="#newNetworkDiagram" prefHeight="32.0" prefWidth="366.0" text="New Network Diagram" />
+            <Label layoutX="59.0" layoutY="59.0" text="Activity Name" />
+            <Label layoutX="59.0" layoutY="95.0" text="Duration" />
+            <Label layoutX="59.0" layoutY="130.0" text="Dependencies" />
+            <TextField fx:id="activityName" layoutX="173.0" layoutY="54.0" prefHeight="27.0" prefWidth="254.0" promptText="e.g. Task1" />
+            <TextField fx:id="duration" layoutX="173.0" layoutY="90.0" prefHeight="27.0" prefWidth="255.0" promptText="e.g. 2" />
+            <Button layoutX="59.0" layoutY="200.0" mnemonicParsing="false" onAction="#addActivity" text="Add Activity" />
+            <Button layoutX="177.0" layoutY="200.0" mnemonicParsing="false" onAction="#resetActivity" text="Reset Activity" />
+            <Button layoutX="59.0" layoutY="250.0" mnemonicParsing="false" onAction="#createNetworkDiagram" prefWidth="180.0" text="Create Network Diagram" />
+            <Button layoutX="59.0" layoutY="300.0" mnemonicParsing="false" onAction="#newNetworkDiagram" prefHeight="32.0" prefWidth="180.0" text="New Network Diagram" />
+            <Label fx:id="errorActivity" layoutX="445.0" layoutY="59.0" textFill="#ff1e1e" />
+            <Label fx:id="errorDuration" layoutX="445.0" layoutY="96.0" textFill="#ff1e1e" />
+            <Label fx:id="errorDependency" layoutX="445.0" layoutY="130.0" textFill="#ff1e1e" />
+         <TextField fx:id="dependency" layoutX="173.0" layoutY="125.0" prefHeight="27.0" prefWidth="256.0" promptText="Enter dependencies" />
+         <TableView fx:id="activityTable" layoutX="650.0" layoutY="46.0" prefHeight="400.0" prefWidth="750.0" />
+         <Button layoutX="650.0" layoutY="475.0" mnemonicParsing="false" onAction="#updateDiagram" text="Update Network Diagram" />
+         <Label layoutX="59.0" layoutY="490.0" text="Final Output:" />
         </Pane>
     </center>
-   <bottom>
-      <TextArea fx:id="finalOutput" editable="false" prefHeight="200.0" prefWidth="296.0" BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets top="20.0" />
-         </BorderPane.margin>
-      </TextArea>
-   </bottom>
+    <bottom>
+        <TextArea fx:id="finalOutput" editable="false" prefHeight="200.0" prefWidth="296.0" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets top="20.0" />
+            </BorderPane.margin>
+        </TextArea>
+    </bottom>
+    <opaqueInsets>
+        <Insets />
+    </opaqueInsets>
 </BorderPane>
