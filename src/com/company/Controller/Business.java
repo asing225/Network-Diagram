@@ -4,6 +4,7 @@ import com.company.Model.Activity;
 
 import java.util.*;
 import java.lang.*;
+import java.util.Map.Entry;
 
 public class Business {
 
@@ -29,130 +30,64 @@ public class Business {
         }
 
         //Prepare list of networks
-        int c = 1;
-        List<List<String>> lstNetwork= new ArrayList<List<String>>();
-        List<List<String>> clonelstNetwork= new ArrayList<List<String>>();
+        List<String> root=new ArrayList<String>();
+        root.add("root");
+        List<List<String>> network= new ArrayList<List<String>>();
+        Map<String,List<String>> mapInput= new LinkedHashMap<String,List<String>>();
+        List<List<String>> cloneNetwork= new ArrayList<List<String>>();
         for (Activity activity : inputList) {
-            List<String> tmpList = new ArrayList<String>();
-            String node= activity.getActivity();
-            //Get the parent node
-            if(parentNodes.contains(node) && c == 1) {
-                tmpList= new ArrayList<String>();
-                tmpList.add(node);
-                clonelstNetwork.add(tmpList);
-                c++;
-                //break;
-            }else {
-                // If incoming node is not a parent node.
-                String str=activity.getDependency();
-                String[] strArray=str.split(",");
-                for(int i=0;i<strArray.length;i++) {
-                    String depend=strArray[i];
-                    if(parentNodes.contains(depend)) {
-                        // If incoming node is direct child of parent node.
-                        if(!(lstNetwork.size()>0)) {
-                            // If parent list is empty.
-                            tmpList= new ArrayList<String>();
-                            tmpList.add(depend);
-                            tmpList.add(node);
-                            clonelstNetwork.add(tmpList);
-                        }else {
-                            for (List<String> lst : lstNetwork) {
-                                if(lst.size()==1&&lst.get(0).equals(depend)) {
-                                    // Incoming node is appended to its parent node.
-                                    tmpList= new ArrayList<String>();
-                                    int index=lstNetwork.indexOf(lst);
-                                    tmpList.add(lst.get(0));
-                                    tmpList.add(node);
-                                    clonelstNetwork.set(index, tmpList);
-                                }else {
-                                    // If there more than 1 path.
-                                    tmpList= new ArrayList<String>();
-                                    tmpList.add(depend);
-                                    tmpList.add(node);
-                                    clonelstNetwork.add(tmpList);
-                                }
-                            }
-                        }
+            String key= activity.getActivity();
+            String[] value= activity.getDependency().split(",");
+            List<String> dependencyList= new ArrayList<String>();
+            for (String string : value) {
+                dependencyList.add(string);
+            }
+            mapInput.put(key, dependencyList);
+        }
 
+        //Prepare a list from map entry set to access key and value both.
+        List<Map.Entry<String, List<String>>> list = new LinkedList<Map.Entry<String, List<String>>>(mapInput.entrySet());
 
-
-                    }else {
-
-                        if(lstNetwork.size()<1) {
-                            tmpList= new ArrayList<String>();
-                            tmpList.add(depend);
-                            tmpList.add(node);
-                            clonelstNetwork.add(tmpList);
-                        }else {
-                            // If there is already present network in the list.
-                            for (int j = 0; j < lstNetwork.size(); j++) {
-                                List<String> createdList=lstNetwork.get(j);
-                                for (int k = 0; k < createdList.size(); k++) {
-                                    if(k==createdList.size()-1) {
-                                        String nod = createdList.get(k);
-                                        if (depend.equals(nod)) {
-                                            tmpList = new ArrayList<String>();
-                                            tmpList.addAll(createdList);
-                                            tmpList.add(k + 1, node);
-                                            clonelstNetwork.set(j, tmpList);
-                                        }
-
-                                    } else {
-                                        String nod=createdList.get(k);
-                                        // If path splits from node which is not a parent node.
-                                        if(depend.equals(nod)) {
-                                            tmpList= new ArrayList<String>();
-                                            tmpList.addAll(createdList.subList(0, k+1));
-                                            tmpList.add(k+1,node);
-                                            String n=node;
-                                            for(int ij=0;ij<inputList.size();ij++) {
-                                                Activity object= inputList.get(ij);
-                                                String act= object.getActivity();
-                                                String dep= object.getDependency();
-
-                                                String[] depArr=dep.split(",");
-                                                for (String string : depArr) {
-                                                    if(string.equals(n)) {
-                                                        tmpList.add(act);
-                                                        n=act;
-                                                    }
-                                                }
-                                            }
-
-                                            clonelstNetwork.add(j,tmpList);
-
-                                        }
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                }
-
+        //Separate all root from input list and add them to network.
+        for (Entry<String, List<String>> entry : list) {
+            if(entry.getValue().equals(root)){
+                List<String> lst= new ArrayList<String>();
+                lst.add(entry.getKey());
+                cloneNetwork.add(lst);
+                mapInput.remove(entry.getKey());
             }
 
-            lstNetwork=new ArrayList<List<String>>(clonelstNetwork);
+        }
+        list = new LinkedList<Map.Entry<String, List<String>>>(mapInput.entrySet());
+        network= new ArrayList<List<String>>(cloneNetwork);
+
+        //Executing a while loop to create the network further as per  size of input list.
+        int bound=list.size();
+        int loopCount=0;
+        while(loopCount<bound) {
+            cloneNetwork= new ArrayList<List<String>>();
+            cloneNetwork=this.insertNodes(list, network);
+            network= new ArrayList<List<String>>(cloneNetwork);
+            loopCount++;
         }
 
         //Validation: Check for lstNetwork, starting node and end node must not be equal, otherwise cyclic
-        for (List<String> list : lstNetwork) {
-            if(list.size()>1) {
-                if(list.get(0).equals(list.get(list.size()-1))) {
+        for (List<String> list1 : network) {
+            for(String str: list1) {
+                if(Collections.frequency(list1,str)>1){
                     return null;
                 }
             }
         }
 
         Map<List<String>,Integer> finalOp= new HashMap<List<String>,Integer>();
-        for (List<String> list : lstNetwork) {
+        for (List<String> list1 : network) {
             int sum=0;
-            for(String str: list) {
+            for(String str: list1) {
                 sum=sum+weight.get(str);
             }
 
-            finalOp.put(list, sum);
+            finalOp.put(list1, sum);
         }
 
         List<Map.Entry<List<String>,Integer>> sortedFinal = new ArrayList<Map.Entry<List<String>, Integer>>(finalOp.entrySet());
@@ -163,8 +98,39 @@ public class Business {
             }
         });
 
-        System.out.println("ResultONe "+sortedFinal);
+        System.out.println("Sorted with weigtage "+sortedFinal);
         return sortedFinal;
+    }
+    private List<List<String>> insertNodes(List<Entry<String, List<String>>> list, List<List<String>> network) {
+        List<List<String>> cloneNetwork= new ArrayList<List<String>>(network);
+        int count=0;
+        for(int i=0;i<network.size();i++) {
+            count=0;
+            List<String> innerList=network.get(i);
+            String parentNode=innerList.get(innerList.size()-1);
+            for(int j=0;j<list.size();j++) {
+                Map.Entry<String, List<String>> m1=(Map.Entry<String, List<String>>) list.get(j);
+                String key=m1.getKey();
+                List<String> dependency= m1.getValue();
+                if(dependency.contains(parentNode)) {
+                    if(count==0) {
+                        List<String> tempList=new ArrayList<String>();
+                        tempList.addAll(innerList);
+                        tempList.add(key);
+                        cloneNetwork.set(i,tempList);
+                        count++;
+                    }else {
+                        List<String> tempList=new ArrayList<String>();
+                        tempList.addAll(innerList);
+                        tempList.add(key);
+                        cloneNetwork.add(tempList);
+
+                    }
+
+                }
+            }
+        }
+        return cloneNetwork;
 
     }
 }
