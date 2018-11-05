@@ -3,22 +3,30 @@ package com.company.Controller;
 import com.company.Main;
 import com.company.Model.Activity;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.control.cell.TextFieldTreeTableCell;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
+import javafx.util.converter.IntegerStringConverter;
 
-import java.util.ArrayList;
-
-import java.util.List;
-import java.util.Map;
+import java.net.URL;
+import java.util.*;
 
 
-public class HomeController {
+public class HomeController implements Initializable {
 
     //getting textFields data from user inputs in local variables.
+    @FXML
+    public TableView<Activity> activityTable;
     @FXML
     private TextField activityName;
     @FXML
@@ -38,10 +46,12 @@ public class HomeController {
 
     //local variables to store the user data.
     private ArrayList<String> inputActivity = new ArrayList();
-
     private List<Activity> activityList = new ArrayList<Activity>();
     private List<Map.Entry<List<String>, Integer>> output = new ArrayList<Map.Entry<List<String>, Integer>>();
 
+    private TableColumn<Activity, String> activityNameColumn = new TableColumn<Activity, String>("Activity Name");
+    private TableColumn<Activity, Integer> durationColumn = new TableColumn<Activity, Integer>("Duration");
+    private TableColumn<Activity, String> dependencyColumn = new TableColumn<Activity, String>("Dependency");
 
     @FXML
     //method to add the activity entered by user to our local variables
@@ -88,11 +98,60 @@ public class HomeController {
             finalOutput.setText("Activity "+ activityName.getText() + " added with Duration: "+ duration.getText());
             finalOutput.appendText("\n");
             activityList.add(activity);
+
+            ObservableList<Activity> data = FXCollections.observableArrayList(activityList);
+            activityTable.setItems(data);
         }
             resetActivity(event);
     }
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        activityTable.setEditable(true);
+        activityNameColumn.setCellValueFactory(new PropertyValueFactory("activity"));
+        activityNameColumn.setMinWidth(250);
+        activityNameColumn.setCellFactory(TextFieldTableCell.<Activity>forTableColumn());
+        editableActivityColumn();
 
+        durationColumn.setCellValueFactory(new PropertyValueFactory("duration"));
+        durationColumn.setMinWidth(250);
+        durationColumn.setCellFactory(TextFieldTableCell.<Activity, Integer>forTableColumn(new IntegerStringConverter()));
+        editableDurationColumn();
+
+        dependencyColumn.setCellValueFactory(new PropertyValueFactory("dependency"));
+        dependencyColumn.setMinWidth(250);
+        dependencyColumn.setCellFactory(TextFieldTableCell.<Activity>forTableColumn());
+        editableDependencyColumn();
+
+        activityTable.getColumns().addAll(activityNameColumn, durationColumn, dependencyColumn);
+    }
+
+    private void editableActivityColumn(){
+        activityNameColumn.setOnEditCommit((TableColumn.CellEditEvent<Activity, String> event) -> {
+            final String name = event.getNewValue() != null ? event.getNewValue()
+                    : event.getOldValue();
+            ((Activity) event.getTableView().getItems().get(event.getTablePosition().getRow())).setActivity(name);
+            activityTable.refresh();
+        });
+    }
+
+    private void editableDurationColumn(){
+        durationColumn.setOnEditCommit((TableColumn.CellEditEvent<Activity, Integer> event) -> {
+            final int time = event.getNewValue() != null ? event.getNewValue()
+                    : event.getOldValue();
+            ((Activity) event.getTableView().getItems().get(event.getTablePosition().getRow())).setDuration(time);
+            activityTable.refresh();
+        });
+    }
+
+    private void editableDependencyColumn(){
+        dependencyColumn.setOnEditCommit((TableColumn.CellEditEvent<Activity, String> event) -> {
+            final String depend = event.getNewValue() != null ? event.getNewValue()
+                    : event.getOldValue();
+            ((Activity) event.getTableView().getItems().get(event.getTablePosition().getRow())).setDependency(depend);
+            activityTable.refresh();
+        });
+    }
 
     @FXML
     public void resetActivity(ActionEvent event) {
@@ -143,7 +202,7 @@ public class HomeController {
             Business path = new Business();
             output = path.createNetwork(activityList);
             if(output==null){
-                finalOutput.setText("The Network Diagram should not be cyclic.");
+                finalOutput.setText("The Network Diagram should not be cyclic or there should not be any disjointed path.");
             }
             else{
                 Object[] pathsToArrays = output.toArray();
@@ -161,5 +220,9 @@ public class HomeController {
         Main main = new Main();
         Stage primaryStage = new Stage();
         main.start(primaryStage);
+    }
+
+    public void updateDiagram(ActionEvent event) throws Exception {
+        createNetworkDiagram(event);
     }
 }
