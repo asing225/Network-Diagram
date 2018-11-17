@@ -12,7 +12,7 @@ public class HelpPage {
         Text text = helpText.helpText();
         StackPane secondaryLayout = new StackPane();
         secondaryLayout.getChildren().add(text);
-        Scene secondScene = new Scene(secondaryLayout, 500, 700);
+        Scene secondScene = new Scene(secondaryLayout, 600, 750);
         Stage newWindow = new Stage();
         newWindow.setScene(secondScene);
         return newWindow;

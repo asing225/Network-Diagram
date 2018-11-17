@@ -32,7 +32,7 @@
             <TextField fx:id="duration" layoutX="173.0" layoutY="90.0" prefHeight="27.0" prefWidth="255.0" promptText="e.g. 2" />
             <Button layoutX="59.0" layoutY="200.0" mnemonicParsing="false" onAction="#addActivity" text="Add Activity" />
             <Button layoutX="177.0" layoutY="200.0" mnemonicParsing="false" onAction="#resetActivity" text="Reset Activity" />
-            <Button layoutX="59.0" layoutY="250.0" mnemonicParsing="false" onAction="#createNetworkDiagram" prefWidth="180.0" text="Create Network Diagram" />
+            <Button layoutX="59.0" layoutY="250.0" mnemonicParsing="false" onAction="#createNetworkDiagram" prefHeight="32.0" prefWidth="126.0" text="Display All Path/s" />
             <Button layoutX="59.0" layoutY="300.0" mnemonicParsing="false" onAction="#newNetworkDiagram" prefHeight="32.0" prefWidth="180.0" text="New Network Diagram" />
             <Label fx:id="errorActivity" layoutX="445.0" layoutY="59.0" textFill="#ff1e1e" />
             <Label fx:id="errorDuration" layoutX="445.0" layoutY="96.0" textFill="#ff1e1e" />
@@ -41,6 +41,9 @@
          <TableView fx:id="activityTable" layoutX="650.0" layoutY="46.0" prefHeight="400.0" prefWidth="750.0" />
          <Button layoutX="650.0" layoutY="475.0" mnemonicParsing="false" onAction="#updateDiagram" text="Update Network Diagram" />
          <Label layoutX="59.0" layoutY="490.0" text="Final Output:" />
+         <Button fx:id="reportButton" layoutX="59.0" layoutY="350.0" mnemonicParsing="false" onAction="#createReport" text="Create Report" />
+         <TextField fx:id="reportName" layoutX="173.0" layoutY="350.0" promptText="Enter report name" />
+         <Button layoutX="199.0" layoutY="250.0" mnemonicParsing="false" onAction="#displayCriticalPaths" prefHeight="32.0" prefWidth="164.0" text="Display Critical Path/s" />
         </Pane>
     </center>
     <bottom>

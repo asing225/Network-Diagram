@@ -2,7 +2,7 @@ package com.company.Controller;
 
 import com.company.Main;
 import com.company.Model.Activity;
-import com.company.Model.Business;
+import com.company.Controller.Business;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,12 +14,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.control.cell.TextFieldTreeTableCell;
-import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -27,6 +29,7 @@ public class HomeController implements Initializable {
 
     @FXML
     public TableView<Activity> activityTable;
+    public TextField reportName;
     @FXML
     private TextField activityName;
     @FXML
@@ -42,7 +45,6 @@ public class HomeController implements Initializable {
     @FXML
     private Label errorDependency;
 
-    private ArrayList<String> inputActivity = new ArrayList();
     private List<Activity> activityList = new ArrayList<Activity>();
     private List<Map.Entry<List<String>, Integer>> output = new ArrayList<Map.Entry<List<String>, Integer>>();
 
@@ -205,7 +207,7 @@ public class HomeController implements Initializable {
             }
             else{
                 Object[] pathsToArrays = output.toArray();
-                finalOutput.setText(null);
+                finalOutput.setText("Displaying All Path/s in the network diagram: \n");
                 for(int i=0;i<pathsToArrays.length;i++){
                     String paths = pathsToArrays[i].toString().replaceAll("\\[","").replaceAll("\\]","").replaceAll(",","->").replaceAll(" ","");
                     String pathDuration = paths.substring(paths.lastIndexOf("=")).replaceAll("=","");
@@ -223,5 +225,63 @@ public class HomeController implements Initializable {
 
     public void updateDiagram(ActionEvent event) throws Exception {
         createNetworkDiagram(event);
+    }
+
+    public void createReport(ActionEvent event) throws Exception{
+        List<Activity> sortedActivityList = sortedList(activityList);
+        String file = "/Users/amanjotsingh/Downloads/" + reportName.getText()+ ".txt";
+        Writer writer = null;
+        try{
+            writer = new BufferedWriter(new FileWriter(file));
+            writer.write("Network Diagram Activity Report\n\n");
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("MM.dd.YYYY 'at' HH:mm:ss");
+            writer.write("File created at: " + sdf.format(cal.getTime()));
+            writer.write("\n\n");
+            for(Activity activity: sortedActivityList){
+                String text = "\nActivity name: " + activity.getActivity() +"\n"+ "Duration: "+ activity.getDuration()+ "\n"
+                        + "Dependencies: " + activity.getDependency();
+                writer.write(text);
+            }
+
+            writer.write("\n");
+            Object[] pathsToArrays = output.toArray();
+            finalOutput.setText(null);
+            for(int i=0;i<pathsToArrays.length;i++){
+                String paths = pathsToArrays[i].toString().replaceAll("\\[","").replaceAll("\\]","").replaceAll(",","->").replaceAll(" ","");
+                String pathDuration = paths.substring(paths.lastIndexOf("=")).replaceAll("=","");
+                writer.write("\nThe "+i +"th path is :" + paths.substring(0,paths.indexOf("=")));
+                writer.write("\nThe duration of this path is :" + pathDuration + "\n");
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            writer.close();
+            finalOutput.setText("Activity Report generated.");
+        }
+    }
+
+    public List<Activity> sortedList(List<Activity> list) {
+        List<Activity> sorted = new ArrayList<Activity>();
+        int i, j, compare = 0;
+        Activity temp = new Activity();
+        for (i = 0; i < list.size(); i++) {
+            temp = list.get(i);
+            for (j = i + 1; j < list.size(); j++) {
+                compare = list.get(i).getActivity().compareTo(list.get(j).getActivity());
+                if (compare > 0) {
+                    sorted.get(i).setActivity(list.get(j).getActivity());
+                    sorted.get(i).setDependency(list.get(j).getDependency());
+                    sorted.get(i).setDuration(list.get(j).getDuration());
+
+                    list.get(j).setActivity(temp.getActivity());
+                    list.get(j).setDuration(temp.getDuration());
+                    list.get(j).setDependency(temp.getDependency());
+                }
+            }
+        }
+        return list;
     }
 }
