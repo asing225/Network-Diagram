@@ -1,28 +1,28 @@
 package com.company.Controller;
 
-import com.company.Main;
-import com.company.Model.Activity;
-import com.company.Controller.Business;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.stage.Stage;
-import javafx.util.converter.IntegerStringConverter;
+        import com.company.Main;
+        import com.company.Model.Activity;
+        import com.company.Controller.Business;
+        import javafx.application.Platform;
+        import javafx.collections.FXCollections;
+        import javafx.collections.ObservableList;
+        import javafx.event.ActionEvent;
+        import javafx.fxml.FXML;
+        import javafx.fxml.Initializable;
+        import javafx.scene.control.*;
+        import javafx.scene.control.Label;
+        import javafx.scene.control.TextField;
+        import javafx.scene.control.cell.PropertyValueFactory;
+        import javafx.scene.control.cell.TextFieldTableCell;
+        import javafx.stage.Stage;
+        import javafx.util.converter.IntegerStringConverter;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.Writer;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.*;
+        import java.io.BufferedWriter;
+        import java.io.FileWriter;
+        import java.io.Writer;
+        import java.net.URL;
+        import java.text.SimpleDateFormat;
+        import java.util.*;
 
 
 public class HomeController implements Initializable {
@@ -102,7 +102,7 @@ public class HomeController implements Initializable {
             ObservableList<Activity> data = FXCollections.observableArrayList(activityList);
             activityTable.setItems(data);
         }
-            resetActivity(event);
+        resetActivity(event);
     }
 
     @Override
@@ -153,7 +153,6 @@ public class HomeController implements Initializable {
         });
     }
 
-
     @FXML
     public void resetActivity(ActionEvent event) {
         activityName.clear();
@@ -203,7 +202,7 @@ public class HomeController implements Initializable {
             Business path = new Business();
             output = path.createNetwork(activityList);
             if(output==null){
-                finalOutput.setText("The Network Diagram should not be cyclic.");
+                finalOutput.setText("The Network Diagram should not be cyclic or there should not be any disjointed path.");
             }
             else{
                 Object[] pathsToArrays = output.toArray();
@@ -264,7 +263,6 @@ public class HomeController implements Initializable {
     }
 
     public List<Activity> sortedList(List<Activity> list) {
-        List<Activity> sorted = new ArrayList<Activity>();
         int i, j, compare = 0;
         Activity temp = new Activity();
         for (i = 0; i < list.size(); i++) {
@@ -272,9 +270,9 @@ public class HomeController implements Initializable {
             for (j = i + 1; j < list.size(); j++) {
                 compare = list.get(i).getActivity().compareTo(list.get(j).getActivity());
                 if (compare > 0) {
-                    sorted.get(i).setActivity(list.get(j).getActivity());
-                    sorted.get(i).setDependency(list.get(j).getDependency());
-                    sorted.get(i).setDuration(list.get(j).getDuration());
+                    list.get(i).setActivity(list.get(j).getActivity());
+                    list.get(i).setDependency(list.get(j).getDependency());
+                    list.get(i).setDuration(list.get(j).getDuration());
 
                     list.get(j).setActivity(temp.getActivity());
                     list.get(j).setDuration(temp.getDuration());
@@ -283,5 +281,25 @@ public class HomeController implements Initializable {
             }
         }
         return list;
+    }
+
+    public void displayCriticalPaths(ActionEvent event) {
+        if(output==null){
+            finalOutput.setText("The Network Diagram should not be cyclic or there should not be any disjointed path.");
+        }
+        else{
+            Object[] pathsToArrays = output.toArray();
+            finalOutput.setText("Displaying Critical Path/s in the network diagram: \n");
+            String paths = pathsToArrays[0].toString().replaceAll("\\[","").replaceAll("\\]","").replaceAll(",","->").replaceAll(" ","");
+            String pathDuration = paths.substring(paths.lastIndexOf("=")).replaceAll("=","");
+            finalOutput.appendText("\n" + "Path: "+ paths.substring(0,paths.indexOf("=")) +"\n" + "Duration: "+ pathDuration+ "\n");
+            for(int i=1;i<pathsToArrays.length;i++){
+                String path = pathsToArrays[i].toString().replaceAll("\\[","").replaceAll("\\]","").replaceAll(",","->").replaceAll(" ","");
+                String pathD = path.substring(path.lastIndexOf("=")).replaceAll("=","");
+                if(Integer.parseInt(pathD) == Integer.parseInt(pathDuration)){
+                    finalOutput.appendText("\n" + "Path: "+ path.substring(0,path.indexOf("=")) +"\n" + "Duration: "+ pathD+ "\n");
+                }
+            }
+        }
     }
 }
