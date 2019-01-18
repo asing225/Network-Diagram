@@ -1,30 +1,35 @@
 package com.company.Controller;
 
-import com.company.Main;
-import com.company.Model.Activity;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.control.cell.TextFieldTreeTableCell;
-import javafx.scene.input.KeyCode;
-import javafx.stage.Stage;
-import javafx.util.converter.IntegerStringConverter;
+        import com.company.Main;
+        import com.company.Model.Activity;
+        import com.company.Controller.Business;
+        import javafx.application.Platform;
+        import javafx.collections.FXCollections;
+        import javafx.collections.ObservableList;
+        import javafx.event.ActionEvent;
+        import javafx.fxml.FXML;
+        import javafx.fxml.Initializable;
+        import javafx.scene.control.*;
+        import javafx.scene.control.Label;
+        import javafx.scene.control.TextField;
+        import javafx.scene.control.cell.PropertyValueFactory;
+        import javafx.scene.control.cell.TextFieldTableCell;
+        import javafx.stage.Stage;
+        import javafx.util.converter.IntegerStringConverter;
 
-import java.net.URL;
-import java.util.*;
+        import java.io.BufferedWriter;
+        import java.io.FileWriter;
+        import java.io.Writer;
+        import java.net.URL;
+        import java.text.SimpleDateFormat;
+        import java.util.*;
 
 
 public class HomeController implements Initializable {
 
-    //getting textFields data from user inputs in local variables.
+    @FXML
+    public TableView<Activity> activityTable;
+    public TextField reportName;
     @FXML
     public TableView<Activity> activityTable;
     @FXML
@@ -41,13 +46,13 @@ public class HomeController implements Initializable {
     private Label errorDuration;
     @FXML
     private Label errorDependency;
-    /*@FXML
-    private CheckComboBox<String> dropDown = new CheckComboBox<String>();*/
 
-    //local variables to store the user data.
-    private ArrayList<String> inputActivity = new ArrayList();
     private List<Activity> activityList = new ArrayList<Activity>();
     private List<Map.Entry<List<String>, Integer>> output = new ArrayList<Map.Entry<List<String>, Integer>>();
+
+    private TableColumn<Activity, String> activityNameColumn = new TableColumn<Activity, String>("Activity Name");
+    private TableColumn<Activity, Integer> durationColumn = new TableColumn<Activity, Integer>("Duration");
+    private TableColumn<Activity, String> dependencyColumn = new TableColumn<Activity, String>("Dependency");
 
     private TableColumn<Activity, String> activityNameColumn = new TableColumn<Activity, String>("Activity Name");
     private TableColumn<Activity, Integer> durationColumn = new TableColumn<Activity, Integer>("Duration");
@@ -102,7 +107,7 @@ public class HomeController implements Initializable {
             ObservableList<Activity> data = FXCollections.observableArrayList(activityList);
             activityTable.setItems(data);
         }
-            resetActivity(event);
+        resetActivity(event);
     }
 
     @Override
@@ -206,7 +211,8 @@ public class HomeController implements Initializable {
             }
             else{
                 Object[] pathsToArrays = output.toArray();
-                finalOutput.setText(null);
+                finalOutput.setText("Displaying All Path/s in the network diagram: \n");
+
                 for(int i=0;i<pathsToArrays.length;i++){
                     String paths = pathsToArrays[i].toString().replaceAll("\\[","").replaceAll("\\]","").replaceAll(",","->").replaceAll(" ","");
                     String pathDuration = paths.substring(paths.lastIndexOf("=")).replaceAll("=","");
@@ -224,5 +230,83 @@ public class HomeController implements Initializable {
 
     public void updateDiagram(ActionEvent event) throws Exception {
         createNetworkDiagram(event);
+
+    }
+
+    public void createReport(ActionEvent event) throws Exception{
+        List<Activity> sortedActivityList = sortedList(activityList);
+        String file = "/Users/amanjotsingh/Downloads/" + reportName.getText()+ ".txt";
+        Writer writer = null;
+        try{
+            writer = new BufferedWriter(new FileWriter(file));
+            writer.write("Network Diagram Activity Report\n\n");
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("MM.dd.YYYY 'at' HH:mm:ss");
+            writer.write("File created at: " + sdf.format(cal.getTime()));
+            writer.write("\n\n");
+            for(Activity activity: sortedActivityList){
+                String text = "\nActivity name: " + activity.getActivity() +"\n"+ "Duration: "+ activity.getDuration()+ "\n"
+                        + "Dependencies: " + activity.getDependency();
+                writer.write(text);
+            }
+
+            writer.write("\n");
+            Object[] pathsToArrays = output.toArray();
+            finalOutput.setText(null);
+            for(int i=0;i<pathsToArrays.length;i++){
+                String paths = pathsToArrays[i].toString().replaceAll("\\[","").replaceAll("\\]","").replaceAll(",","->").replaceAll(" ","");
+                String pathDuration = paths.substring(paths.lastIndexOf("=")).replaceAll("=","");
+                writer.write("\nThe "+i +"th path is :" + paths.substring(0,paths.indexOf("=")));
+                writer.write("\nThe duration of this path is :" + pathDuration + "\n");
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            writer.close();
+            finalOutput.setText("Activity Report generated.");
+        }
+    }
+
+    public List<Activity> sortedList(List<Activity> list) {
+        int i, j, compare = 0;
+        Activity temp = new Activity();
+        for (i = 0; i < list.size(); i++) {
+            temp = list.get(i);
+            for (j = i + 1; j < list.size(); j++) {
+                compare = list.get(i).getActivity().compareTo(list.get(j).getActivity());
+                if (compare > 0) {
+                    list.get(i).setActivity(list.get(j).getActivity());
+                    list.get(i).setDependency(list.get(j).getDependency());
+                    list.get(i).setDuration(list.get(j).getDuration());
+
+                    list.get(j).setActivity(temp.getActivity());
+                    list.get(j).setDuration(temp.getDuration());
+                    list.get(j).setDependency(temp.getDependency());
+                }
+            }
+        }
+        return list;
+    }
+
+    public void displayCriticalPaths(ActionEvent event) {
+        if(output==null){
+            finalOutput.setText("The Network Diagram should not be cyclic or there should not be any disjointed path.");
+        }
+        else{
+            Object[] pathsToArrays = output.toArray();
+            finalOutput.setText("Displaying Critical Path/s in the network diagram: \n");
+            String paths = pathsToArrays[0].toString().replaceAll("\\[","").replaceAll("\\]","").replaceAll(",","->").replaceAll(" ","");
+            String pathDuration = paths.substring(paths.lastIndexOf("=")).replaceAll("=","");
+            finalOutput.appendText("\n" + "Path: "+ paths.substring(0,paths.indexOf("=")) +"\n" + "Duration: "+ pathDuration+ "\n");
+            for(int i=1;i<pathsToArrays.length;i++){
+                String path = pathsToArrays[i].toString().replaceAll("\\[","").replaceAll("\\]","").replaceAll(",","->").replaceAll(" ","");
+                String pathD = path.substring(path.lastIndexOf("=")).replaceAll("=","");
+                if(Integer.parseInt(pathD) == Integer.parseInt(pathDuration)){
+                    finalOutput.appendText("\n" + "Path: "+ path.substring(0,path.indexOf("=")) +"\n" + "Duration: "+ pathD+ "\n");
+                }
+            }
+        }
     }
 }

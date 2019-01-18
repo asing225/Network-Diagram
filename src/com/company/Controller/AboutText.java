@@ -11,7 +11,8 @@ public class AboutText {
         text1.setFont(Font.font(null, FontWeight.BOLD, FontPosture.REGULAR, 16));
 
         Text text2 = new Text();
-        text2.setText("\t\t\t\tversion v1\n\n" + "\t\t\tNot for commercial use\n\n\n\n\n\n\n");
+
+        text2.setText("\t\t\t\t\tversion v2\n\n" + "\t\t\t\tNot for commercial use\n\n\n\n\n\n\n");
         text2.setTextAlignment(TextAlignment.CENTER);
         text2.setFont(Font.font(null, FontWeight.BLACK, FontPosture.REGULAR, 16));
 
