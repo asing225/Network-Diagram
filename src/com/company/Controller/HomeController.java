@@ -31,6 +31,8 @@ public class HomeController implements Initializable {
     public TableView<Activity> activityTable;
     public TextField reportName;
     @FXML
+    public TableView<Activity> activityTable;
+    @FXML
     private TextField activityName;
     @FXML
     private TextField duration;
@@ -52,6 +54,9 @@ public class HomeController implements Initializable {
     private TableColumn<Activity, Integer> durationColumn = new TableColumn<Activity, Integer>("Duration");
     private TableColumn<Activity, String> dependencyColumn = new TableColumn<Activity, String>("Dependency");
 
+    private TableColumn<Activity, String> activityNameColumn = new TableColumn<Activity, String>("Activity Name");
+    private TableColumn<Activity, Integer> durationColumn = new TableColumn<Activity, Integer>("Duration");
+    private TableColumn<Activity, String> dependencyColumn = new TableColumn<Activity, String>("Dependency");
 
     @FXML
     //method to add the activity entered by user to our local variables
@@ -98,7 +103,7 @@ public class HomeController implements Initializable {
             finalOutput.setText("Activity "+ activityName.getText() + " added with Duration: "+ duration.getText());
             finalOutput.appendText("\n");
             activityList.add(activity);
-            ////////
+
             ObservableList<Activity> data = FXCollections.observableArrayList(activityList);
             activityTable.setItems(data);
         }
@@ -207,6 +212,7 @@ public class HomeController implements Initializable {
             else{
                 Object[] pathsToArrays = output.toArray();
                 finalOutput.setText("Displaying All Path/s in the network diagram: \n");
+
                 for(int i=0;i<pathsToArrays.length;i++){
                     String paths = pathsToArrays[i].toString().replaceAll("\\[","").replaceAll("\\]","").replaceAll(",","->").replaceAll(" ","");
                     String pathDuration = paths.substring(paths.lastIndexOf("=")).replaceAll("=","");
@@ -224,6 +230,7 @@ public class HomeController implements Initializable {
 
     public void updateDiagram(ActionEvent event) throws Exception {
         createNetworkDiagram(event);
+
     }
 
     public void createReport(ActionEvent event) throws Exception{

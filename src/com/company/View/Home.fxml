@@ -44,6 +44,7 @@
          <Button fx:id="reportButton" layoutX="59.0" layoutY="350.0" mnemonicParsing="false" onAction="#createReport" text="Create Report" />
          <TextField fx:id="reportName" layoutX="173.0" layoutY="350.0" promptText="Enter report name" />
          <Button layoutX="199.0" layoutY="250.0" mnemonicParsing="false" onAction="#displayCriticalPaths" prefHeight="32.0" prefWidth="164.0" text="Display Critical Path/s" />
+
         </Pane>
     </center>
     <bottom>

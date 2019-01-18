@@ -8,6 +8,7 @@ public class HelpText {
         text.setText("Activity name - Enter the name of the activity. This field can have value with alphabets and numbers."
                 + "\n\nDuration - Enter the time duration of the activity. This field can only have numeric values."
                 + "\n\nDependencies - Enter the activities on which this activity depends. This filed can only have values from previously entered activities. Any other activity entered will result in error."
+
                 + "\n\nActivity Table - This table with all the data of activities that the user has entered."
                 + "\n\nButtons: \nAdd Activity - to save the activity entered in the input fields and display it in the activity table."
                 + "\n\nReset Activity - to reset the input fields and user can start entering new activity values."
@@ -23,6 +24,7 @@ public class HelpText {
                 + "\n\nFinal Output - to display the current log and the final paths."
                 );
         text.setWrappingWidth(500);
+
         return text;
     }
 }
